@@ -1,0 +1,17 @@
+{
+  "name": "advaders",
+  "version": "1.0.0",
+  "description": "Pi-hole ad blocking visualized as a passive Space Invaders arcade",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "screenshots": "node scripts/screenshots.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^23.11.1"
+  }
+}

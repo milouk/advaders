@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADVADERS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-crt">
+  <canvas id="game"></canvas>
+
+  <div class="hud hud-tl" id="hud-stats">
+    <div class="title" id="hud-title">ADVADERS</div>
+    <div class="stat-row"><span class="stat-label">BLOCKED</span><span class="stat-val" id="hud-blocked">0</span></div>
+    <div class="stat-row"><span class="stat-label">RATE</span><span class="stat-val" id="hud-rate">0/min</span></div>
+  </div>
+
+  <div class="hud hud-tr">
+    <div class="status-line">
+      <span class="status-dot" id="conn-dot"></span>
+      <span class="status-text" id="conn-text">CONNECTING…</span>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">STYLE</span>
+      <div class="seg" id="theme-seg"></div>
+    </div>
+    <div class="ctrl-group">
+      <span class="ctrl-label">SPRITE</span>
+      <div class="seg" id="sprite-seg"></div>
+    </div>
+  </div>
+
+  <div class="hud hud-bl" id="feed">
+    <div class="feed-label">RECENT BLOCKS</div>
+    <ul class="feed-list" id="feed-list"></ul>
+  </div>
+
+  <div class="tooltip" id="tooltip" hidden>
+    <div class="tt-domain" id="tt-domain"></div>
+    <div class="tt-meta" id="tt-meta"></div>
+  </div>
+
+  <div class="detail" id="detail" hidden>
+    <div class="detail-head">
+      <span class="detail-domain" id="detail-domain"></span>
+      <button class="detail-close" id="detail-close" aria-label="Close">×</button>
+    </div>
+    <dl class="detail-grid" id="detail-grid"></dl>
+    <div class="detail-badge">✕ BLOCKED</div>
+  </div>
+
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <script src="game.js"></script>
+</body>
+</html>
