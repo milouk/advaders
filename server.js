@@ -37,7 +37,6 @@ const CONFIG = {
 
   DEFAULT_THEME: envStr('DEFAULT_THEME', 'crt'),
   DEFAULT_SPRITE: envStr('DEFAULT_SPRITE', 'classic'),
-  DEFAULT_DENSITY: envStr('DEFAULT_DENSITY', 'normal'),
   TITLE: envStr('TITLE', 'ADVADERS'),
 };
 
@@ -104,7 +103,6 @@ function clientConfig() {
     pollIntervalMs: CONFIG.POLL_INTERVAL_MS,
     defaultTheme: CONFIG.DEFAULT_THEME,
     defaultSprite: CONFIG.DEFAULT_SPRITE,
-    defaultDensity: CONFIG.DEFAULT_DENSITY,
     title: CONFIG.TITLE,
     version: VERSION,
   };

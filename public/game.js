@@ -352,6 +352,28 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
+// ── background cache (theme bgs are static per W/H/theme, expensive to
+// redraw at 60fps — minimal's dot grid + ASCII's char rain alone are
+// thousands of draw calls per frame). Render once into an offscreen
+// canvas, drawImage from there each frame. Invalidate on resize/theme.
+let bgCache = { theme: null, w: 0, h: 0, dpr: 0, canvas: null };
+function getBgCanvas(theme, w, h) {
+  if (bgCache.theme === theme && bgCache.w === w && bgCache.h === h && bgCache.dpr === DPR) {
+    return bgCache.canvas;
+  }
+  const c = bgCache.canvas || document.createElement('canvas');
+  c.width = Math.floor(w * DPR);
+  c.height = Math.floor(h * DPR);
+  const cx = c.getContext('2d');
+  cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  cx.imageSmoothingEnabled = false;
+  cx.fillStyle = theme.bg === 'gradient' ? '#ffe6c4' : theme.bg;
+  cx.fillRect(0, 0, w, h);
+  theme.drawBg(cx, w, h);
+  bgCache = { theme, w, h, dpr: DPR, canvas: c };
+  return c;
+}
+
 // ── sprite cache (offscreen rasterized pixel art) ──────────
 const spriteCache = new Map();
 function getSpriteCanvas(category, frame, color, blocky) {
@@ -417,7 +439,6 @@ function drawInvader(inv, theme, spriteStyle, frame, hovered) {
 // ── state ──────────────────────────────────────────────────
 const CLIENT_NAMES = ['kitchen-tv', 'macbook-pro', 'iphone-15', 'roku-living', 'pixel-9', 'office-laptop', 'thermostat'];
 function pickClient(real) { return real || CLIENT_NAMES[Math.floor(Math.random() * CLIENT_NAMES.length)]; }
-function hash(s) { let h = 0; for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0; return Math.abs(h); }
 
 const state = {
   config: {
@@ -479,9 +500,10 @@ function hitTest(mx, my) {
 let lastTimestamp = 0;
 let pollInflight = false;
 let lastSeenIds = new Set();
+let firstPoll = true;
 
 async function pollPihole() {
-  if (demoMode || pollInflight) return;
+  if (pollInflight) return;
   pollInflight = true;
   try {
     const r = await fetch(`api/queries?since=${lastTimestamp}`);
@@ -496,10 +518,17 @@ async function pollPihole() {
       if (lastSeenIds.size > 1000) {
         const arr = [...lastSeenIds]; lastSeenIds = new Set(arr.slice(-500));
       }
-      const interval = state.config.pollIntervalMs;
-      const stagger = blocked.length > 0 ? Math.max(40, Math.floor(interval / Math.max(blocked.length, 1))) : 0;
-      blocked.forEach((q, i) => setTimeout(() => state.spawnQueue.push(q), i * stagger));
       lastTimestamp = data.timestamp || lastTimestamp;
+      // Skip the historical backlog returned by the very first poll —
+      // we just want to start tracking from "now". Without this, Pi-hole's
+      // last 200 blocks would all flood the field at startup.
+      if (firstPoll) {
+        firstPoll = false;
+      } else if (blocked.length) {
+        const interval = state.config.pollIntervalMs;
+        const stagger = Math.max(40, Math.floor(interval / blocked.length));
+        blocked.forEach((q, i) => setTimeout(() => state.spawnQueue.push(q), i * stagger));
+      }
     } else {
       startDemo();
     }
@@ -555,11 +584,10 @@ function tickDemo() {
 
 // ── sim ────────────────────────────────────────────────────
 function spawnInvader(q) {
-  const cat = categoryOf(q.domain);
   state.invaders.push({
     id: nextId++,
     domain: q.domain,
-    category: cat,
+    category: categoryOf(q.domain),
     client: pickClient(q.client),
     list: pickList(q.status),
     time: q.time ? q.time * 1000 : Date.now(),
@@ -568,7 +596,6 @@ function spawnInvader(q) {
     y: -30 - Math.random() * 40,
     vy: 18 + Math.random() * 12,
     vx: (Math.random() - 0.5) * 8,
-    seed: hash(q.domain || ''),
     spawnT: performance.now(),
     dead: false,
     deathT: 0,
@@ -630,22 +657,26 @@ function step(dt, t) {
     }
   }
 
-  // shots home toward target
+  // shots home toward target (squared distance to avoid sqrt in hot loop)
+  const HIT_R2 = 196; // 14²
+  const SHOT_SPEED = 620;
   for (const s of state.shots) {
     const inv = state.invaders.find(i => i.id === s.targetId && !i.dead);
     if (!inv) { s.dead = true; continue; }
     const dx = inv.x - s.x, dy = inv.y - s.y;
-    const d = Math.hypot(dx, dy) || 1;
-    const speed = 620;
-    s.x += (dx / d) * speed * dt;
-    s.y += (dy / d) * speed * dt;
-    if (d < 14) {
+    const d2 = dx * dx + dy * dy;
+    if (d2 < HIT_R2) {
       s.dead = true;
       inv.dead = true;
       inv.deathT = t;
       state.bursts.push({ id: s.id, x: inv.x, y: inv.y, t, category: inv.category });
       onBlocked(inv);
+      continue;
     }
+    const inv_d = Math.sqrt(d2) || 1;
+    const k = SHOT_SPEED * dt / inv_d;
+    s.x += dx * k;
+    s.y += dy * k;
   }
 
   // GC
@@ -676,9 +707,8 @@ function drawFrame() {
   const t = performance.now();
   const theme = THEMES[state.theme];
 
-  ctx.fillStyle = theme.bg === 'gradient' ? '#ffe6c4' : theme.bg;
-  ctx.fillRect(0, 0, W, H);
-  theme.drawBg(ctx, W, H, t);
+  const bg = getBgCanvas(theme, W, H);
+  ctx.drawImage(bg, 0, 0, W, H);
 
   const frame = Math.floor(t / 380) % 2;
 
@@ -750,15 +780,32 @@ function updateConnectionDOM() {
   dom.connDot.className = 'status-dot ' + (state.connected ? 'live' : 'demo');
 }
 
+// Tooltip render is called every animation frame. Skip DOM writes when
+// nothing changed; only re-measure size when the hovered invader changes
+// (offsetWidth/Height force layout, expensive at 60Hz).
+let lastHovered = null;
+let tooltipShown = false;
+let ttW = 0, ttH = 0;
 function renderTooltip() {
   const inv = state.hovered;
-  if (!inv || inv.dead) { dom.tooltip.hidden = true; return; }
-  dom.tooltip.hidden = false;
-  dom.ttDomain.textContent = inv.domain;
-  dom.ttMeta.textContent = `${inv.category} · ${inv.client}`;
-  const TT_W = dom.tooltip.offsetWidth, TT_H = dom.tooltip.offsetHeight;
-  let x = inv.x + 18, y = inv.y - TT_H - 8;
-  if (x + TT_W > W - 8) x = inv.x - TT_W - 18;
+  if (!inv || inv.dead) {
+    if (tooltipShown) {
+      dom.tooltip.hidden = true;
+      tooltipShown = false;
+      lastHovered = null;
+    }
+    return;
+  }
+  if (inv !== lastHovered) {
+    dom.ttDomain.textContent = inv.domain;
+    dom.ttMeta.textContent = `${inv.category} · ${inv.client}`;
+    if (!tooltipShown) { dom.tooltip.hidden = false; tooltipShown = true; }
+    ttW = dom.tooltip.offsetWidth;
+    ttH = dom.tooltip.offsetHeight;
+    lastHovered = inv;
+  }
+  let x = inv.x + 18, y = inv.y - ttH - 8;
+  if (x + ttW > W - 8) x = inv.x - ttW - 18;
   if (y < 8) y = inv.y + 22;
   dom.tooltip.style.left = x + 'px';
   dom.tooltip.style.top = y + 'px';
@@ -799,7 +846,9 @@ function setActive(container, val) {
 function applyTheme(name) {
   if (!THEMES[name]) return;
   state.theme = name;
-  document.body.className = 'theme-' + name;
+  const cls = document.body.classList;
+  for (const c of [...cls]) if (c.startsWith('theme-')) cls.remove(c);
+  cls.add('theme-' + name);
   setActive(dom.themeSeg, name);
   try { localStorage.setItem('advaders.theme', name); } catch {}
 }
@@ -831,7 +880,9 @@ async function boot() {
   state.config = { ...state.config, ...cfg };
   if (cfg.title) {
     dom.title.textContent = cfg.title;
-    document.title = cfg.title;
+    // Only override the descriptive browser-tab title when the user
+    // customizes TITLE; the default keeps the SEO-friendly subtitle.
+    if (cfg.title !== 'ADVADERS') document.title = cfg.title;
   }
   if (cfg.version) {
     const el = document.getElementById('hud-version');
@@ -899,7 +950,7 @@ function seedField(n) {
       id: nextId++, domain: pick.d, category: pick.c, client: '192.168.1.42',
       list: 'StevenBlack', time: Date.now(), status: 'GRAVITY',
       x, y, vy: 18 + rng() * 12, vx: (rng() - 0.5) * 6,
-      seed: hash(pick.d), spawnT: performance.now() - 800,
+      spawnT: performance.now() - 800,
       dead: false, deathT: 0,
     });
   }

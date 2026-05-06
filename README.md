@@ -123,9 +123,8 @@ Every knob is an env var.
 | `PIHOLE_INSECURE_TLS` | `false`            | Accept self-signed certs                             |
 | `PIHOLE_QUERY_LENGTH` | `200`              | `length` param sent to Pi-hole `/api/queries`        |
 | `POLL_INTERVAL_MS`    | `2000`             | How often the browser polls the proxy                |
-| `DEFAULT_THEME`       | `crt`              | `crt` \| `minimal` \| `cyber` \| `pop`               |
+| `DEFAULT_THEME`       | `crt`              | `crt` \| `minimal` \| `cyber` \| `pop` \| `ascii`    |
 | `DEFAULT_SPRITE`      | `classic`          | `classic` \| `blocky` \| `dot` \| `glyph`            |
-| `DEFAULT_DENSITY`     | `normal`           | `sparse` \| `normal` \| `dense`                      |
 
 `?theme=`, `?sprite=`, and `?seed=N` URL params override defaults at runtime (used by the screenshot script and for sharing specific looks).
 
