@@ -2,6 +2,11 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
+// Version: prefer build-time arg (ENV VERSION baked in by Docker on tag
+// builds), fall back to package.json (dev/non-tagged builds).
+const VERSION = process.env.VERSION
+  || (() => { try { return require('./package.json').version; } catch { return 'dev'; } })();
+
 // ── env helpers ──────────────────────────────────────────────
 const envStr = (k, d) => {
   const v = process.env[k];
@@ -101,6 +106,7 @@ function clientConfig() {
     defaultSprite: CONFIG.DEFAULT_SPRITE,
     defaultDensity: CONFIG.DEFAULT_DENSITY,
     title: CONFIG.TITLE,
+    version: VERSION,
   };
 }
 
@@ -155,7 +161,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(CONFIG.PORT, CONFIG.HOST, () => {
-  console.log(`\n  ${CONFIG.TITLE}  →  http://${CONFIG.HOST}:${CONFIG.PORT}`);
+  console.log(`\n  ${CONFIG.TITLE} v${VERSION}  →  http://${CONFIG.HOST}:${CONFIG.PORT}`);
   if (PIHOLE_CONFIGURED) console.log(`  pi-hole   →  ${CONFIG.PIHOLE_URL}`);
   else console.log(`  pi-hole   →  not configured (frontend will run in demo mode)`);
   console.log(`  theme/sprite  →  ${CONFIG.DEFAULT_THEME} / ${CONFIG.DEFAULT_SPRITE}`);

@@ -121,6 +121,11 @@ body.theme-pop .status-line { font-family: var(--font-body); }
   filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.35));
   flex-shrink: 0;
 }
+.title-line {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
 .title {
   font-size: 26px;
   font-weight: 700;
@@ -129,6 +134,18 @@ body.theme-pop .status-line { font-family: var(--font-body); }
   text-transform: uppercase;
   line-height: 1;
 }
+.version-pill {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  font-family: var(--font-body, var(--font));
+  white-space: nowrap;
+}
+.version-pill:empty { display: none; }
 .subtitle {
   font-size: 10px;
   letter-spacing: 1.5px;

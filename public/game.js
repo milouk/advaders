@@ -833,6 +833,10 @@ async function boot() {
     dom.title.textContent = cfg.title;
     document.title = cfg.title;
   }
+  if (cfg.version) {
+    const el = document.getElementById('hud-version');
+    if (el) el.textContent = 'v' + String(cfg.version).replace(/^v/, '');
+  }
 
   const params = new URLSearchParams(location.search);
   const urlTheme = params.get('theme');
