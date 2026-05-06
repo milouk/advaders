@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="public/favicon.svg" alt="" height="96">
+</p>
+
 <h1 align="center">
   Advaders
   <br>
@@ -5,7 +9,8 @@
 </h1>
 
 <p align="center">
-  <a href="https://pi-hole.net"><img alt="Pi-hole" src="https://github.com/pi-hole/graphics/raw/master/Vortex/Vortex.png" height="60"></a>
+  built for <a href="https://pi-hole.net">Pi-hole</a> &nbsp;
+  <a href="https://pi-hole.net"><img alt="Pi-hole" src="https://github.com/pi-hole/graphics/raw/master/Vortex/Vortex.png" height="22"></a>
 </p>
 
 <p align="center">
