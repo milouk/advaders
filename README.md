@@ -1,16 +1,26 @@
-# Advaders
+<h1 align="center">
+  Advaders
+  <br>
+  <sub><sup>a Pi-hole live blocking visualizer</sup></sub>
+</h1>
 
-[![build](https://github.com/milouk/advaders/actions/workflows/build.yml/badge.svg)](https://github.com/milouk/advaders/actions/workflows/build.yml)
-[![pages](https://github.com/milouk/advaders/actions/workflows/pages.yml/badge.svg)](https://milouk.me/advaders/)
-[![ghcr](https://img.shields.io/badge/ghcr.io-milouk%2Fadvaders-2496ED?logo=docker&logoColor=white)](https://github.com/milouk/advaders/pkgs/container/advaders)
-[![image size](https://ghcr-badge.egpl.dev/milouk/advaders/size?tag=latest&label=image%20size)](https://github.com/milouk/advaders/pkgs/container/advaders)
-[![pulls](https://ghcr-badge.egpl.dev/milouk/advaders/pulls?label=pulls)](https://github.com/milouk/advaders/pkgs/container/advaders)
-[![stars](https://img.shields.io/github/stars/milouk/advaders?style=flat&logo=github)](https://github.com/milouk/advaders)
-[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+<p align="center">
+  <a href="https://pi-hole.net"><img alt="Pi-hole" src="https://github.com/pi-hole/graphics/raw/master/Vortex/Vortex.png" height="60"></a>
+</p>
 
-> Pi-hole ad blocking, visualized as a passive Space Invaders arcade.
+<p align="center">
+  <a href="https://github.com/milouk/advaders/actions/workflows/build.yml"><img alt="build" src="https://github.com/milouk/advaders/actions/workflows/build.yml/badge.svg"></a>
+  <a href="https://milouk.me/advaders/"><img alt="pages" src="https://github.com/milouk/advaders/actions/workflows/pages.yml/badge.svg"></a>
+  <a href="https://github.com/milouk/advaders/pkgs/container/advaders"><img alt="ghcr" src="https://img.shields.io/badge/ghcr.io-milouk%2Fadvaders-2496ED?logo=docker&logoColor=white"></a>
+  <a href="https://github.com/milouk/advaders"><img alt="stars" src="https://img.shields.io/github/stars/milouk/advaders?style=flat&logo=github"></a>
+  <a href="https://github.com/milouk/advaders/commits/main"><img alt="last commit" src="https://img.shields.io/github/last-commit/milouk/advaders?logo=github"></a>
+  <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+  <a href="https://ko-fi.com/milouk"><img alt="ko-fi" src="https://img.shields.io/badge/ko--fi-buy_me_a_coffee-FF5E5B?logo=ko-fi&logoColor=white"></a>
+</p>
 
-Blocked DNS queries fall from the top as invaders. The Pi-hole defender at the bottom auto-targets and zaps them. It never misses — every blocked query gets visually destroyed, just like Pi-hole itself. Live data via the Pi-hole v6 API; no Pi-hole? The frontend runs a built-in demo automatically.
+> A companion visualizer for [**Pi-hole**](https://pi-hole.net/). Every blocked DNS query falls from the top as a Space Invader; the defender at the bottom auto-zaps each one. It never misses — Pi-hole always blocks, so the visualization always lands the shot.
+
+Live data via the Pi-hole v6 API. No Pi-hole? The frontend runs a built-in demo automatically — that's how the [live demo](https://milouk.me/advaders/) works.
 
 **🕹️ Try the live demo: <https://milouk.me/advaders/>**
 
@@ -20,7 +30,7 @@ Zero-config self-host: `docker run -p 3000:3000 ghcr.io/milouk/advaders:latest` 
 
 ## Themes
 
-Four full visual languages, switchable from the top-right toolbar. Selection persists across reloads.
+Five full visual languages, switchable from the top-right toolbar. Selection persists across reloads.
 
 ### A · Retro CRT
 
@@ -45,6 +55,12 @@ Magenta/cyan glow, scanline grid, radial vignette.
 Bold colors, chunky borders, drop-shadow comic style.
 
 ![Pop](docs/screenshots/pop.png)
+
+### E · ASCII
+
+Pure terminal: green-on-black, ASCII defender (`<[Λ]>`), `|` shots, character-burst explosions.
+
+![ASCII](docs/screenshots/ascii.png)
 
 ## Sprite styles
 
@@ -140,6 +156,12 @@ The browser polls `api/queries?since=<ts>`; the server proxies to Pi-hole, filte
 ## Contributing
 
 PRs welcome — open an issue first if you're planning anything substantial. The code is intentionally small and dependency-free; please keep it that way.
+
+## Support
+
+If Advaders made you smile while watching ads die, consider buying me a coffee — it keeps the lasers green.
+
+<a href="https://ko-fi.com/milouk"><img height="36" alt="Buy Me a Coffee at ko-fi.com" src="https://storage.ko-fi.com/cdn/kofi3.png?v=6" /></a>
 
 ## License
 

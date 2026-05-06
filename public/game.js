@@ -275,8 +275,71 @@ const THEMES = {
       ctx.restore();
     },
   },
+  ascii: {
+    name: 'ASCII',
+    bg: '#000000',
+    cat: { ad: '#39ff14', tracker: '#9eff39', analytics: '#39ffd6', telemetry: '#80ff80' },
+    accent: '#39ff14',
+    glow: '#39ff14',
+    drawBg(ctx, w, h) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(57,255,20,0.05)';
+      for (let y = 0; y < h; y += 16) ctx.fillRect(0, y, w, 1);
+      ctx.globalAlpha = 0.04;
+      ctx.fillStyle = '#39ff14';
+      ctx.font = '11px ui-monospace, "JetBrains Mono", monospace';
+      ctx.textBaseline = 'top';
+      const cols = Math.ceil(w / 8);
+      const rows = Math.ceil(h / 14);
+      for (let r = 0; r < rows; r += 4) {
+        for (let c = 0; c < cols; c += 8) {
+          const ch = '01'[(r * 7 + c * 3) % 2];
+          ctx.fillText(ch, c * 8, r * 14);
+        }
+      }
+      ctx.restore();
+    },
+    drawDefender(ctx, x, y, firing) {
+      ctx.save();
+      ctx.fillStyle = '#39ff14';
+      ctx.shadowColor = '#39ff14'; ctx.shadowBlur = 8;
+      ctx.font = '700 18px ui-monospace, "JetBrains Mono", monospace';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('<[Λ]>', x, y);
+      if (firing) {
+        ctx.fillStyle = '#aaffaa';
+        ctx.fillText('|', x, y - 14);
+      }
+      ctx.restore();
+    },
+    drawShot(ctx, x, y) {
+      ctx.save();
+      ctx.fillStyle = '#aaffaa';
+      ctx.shadowColor = '#39ff14'; ctx.shadowBlur = 6;
+      ctx.font = '700 16px ui-monospace, "JetBrains Mono", monospace';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('|', x, y);
+      ctx.restore();
+    },
+    drawBurst(ctx, x, y, t, color) {
+      const o = 1 - t;
+      ctx.save();
+      ctx.globalAlpha = o;
+      ctx.fillStyle = color;
+      ctx.shadowColor = color; ctx.shadowBlur = 6;
+      ctx.font = `700 ${Math.max(10, 18 - t * 6)}px ui-monospace, monospace`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      const chars = ['*', '+', '×', '·'];
+      for (let i = 0; i < 8; i++) {
+        const a = (i / 8) * Math.PI * 2;
+        const d = t * 24;
+        ctx.fillText(chars[i % chars.length], x + Math.cos(a) * d, y + Math.sin(a) * d);
+      }
+      ctx.restore();
+    },
+  },
 };
-const THEME_LIST = ['crt', 'minimal', 'cyber', 'pop'];
+const THEME_LIST = ['crt', 'minimal', 'cyber', 'pop', 'ascii'];
 const SPRITE_LIST = ['classic', 'blocky', 'dot', 'glyph'];
 
 function roundRect(ctx, x, y, w, h, r) {

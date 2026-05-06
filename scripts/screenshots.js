@@ -25,8 +25,9 @@ const SHOTS = [
   { theme: 'minimal', sprite: 'classic' },
   { theme: 'cyber',   sprite: 'classic' },
   { theme: 'pop',     sprite: 'classic' },
-  { theme: 'cyber',   sprite: 'glyph', file: 'cyber-glyph' },
-  { theme: 'pop',     sprite: 'dot',   file: 'pop-dot' },
+  { theme: 'ascii',   sprite: 'glyph',   file: 'ascii' },
+  { theme: 'cyber',   sprite: 'glyph',   file: 'cyber-glyph' },
+  { theme: 'pop',     sprite: 'dot',     file: 'pop-dot' },
 ];
 
 (async () => {
