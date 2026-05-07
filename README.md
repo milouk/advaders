@@ -15,7 +15,7 @@
 
 <p align="center">
   <a href="https://github.com/milouk/advaders/actions/workflows/build.yml"><img alt="build" src="https://github.com/milouk/advaders/actions/workflows/build.yml/badge.svg"></a>
-  <a href="https://milouk.me/advaders/"><img alt="pages" src="https://github.com/milouk/advaders/actions/workflows/pages.yml/badge.svg"></a>
+  <a href="https://milouk.me/projects/advaders/"><img alt="pages" src="https://github.com/milouk/advaders/actions/workflows/pages.yml/badge.svg"></a>
   <a href="https://github.com/milouk/advaders/pkgs/container/advaders"><img alt="ghcr" src="https://img.shields.io/badge/ghcr.io-milouk%2Fadvaders-2496ED?logo=docker&logoColor=white"></a>
   <a href="https://github.com/milouk/advaders"><img alt="stars" src="https://img.shields.io/github/stars/milouk/advaders?style=flat&logo=github"></a>
   <a href="https://github.com/milouk/advaders/commits/main"><img alt="last commit" src="https://img.shields.io/github/last-commit/milouk/advaders?logo=github"></a>
@@ -25,9 +25,9 @@
 
 > A companion visualizer for [**Pi-hole**](https://pi-hole.net/). Every blocked DNS query falls from the top as a Space Invader; the defender at the bottom auto-zaps each one. It never misses — Pi-hole always blocks, so the visualization always lands the shot.
 
-Live data via the Pi-hole v6 API. No Pi-hole? The frontend runs a built-in demo automatically — that's how the [live demo](https://milouk.me/advaders/) works.
+Live data via the Pi-hole v6 API. No Pi-hole? The frontend runs a built-in demo automatically — that's how the [live demo](https://milouk.me/projects/advaders/) works.
 
-**🕹️ Try the live demo: <https://milouk.me/advaders/>**
+**🕹️ Try the live demo: <https://milouk.me/projects/advaders/>**
 
 Zero-config self-host: `docker run -p 3000:3000 ghcr.io/milouk/advaders:latest` — done.
 
